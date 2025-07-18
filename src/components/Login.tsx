@@ -18,38 +18,44 @@ export function Login({ onLogin }: LoginProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md bg-white rounded-lg shadow p-6">
-        <div className="flex justify-center mb-4">
-          <Truck className="h-12 w-12 text-blue-600" />
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center justify-center w-16 h-16 bg-blue-600 rounded-xl">
+            <Truck className="h-8 w-8 text-white" />
+          </div>
         </div>
-        <h2 className="text-2xl text-center font-semibold">TMS Quick Allocation</h2>
-        <p className="text-center text-gray-600 mb-4">Sign in to your account</p>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">TMS Quick Allocation</h2>
+          <p className="text-gray-600">Sign in to your account</p>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">Username</label>
             <input
               id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500"
+              placeholder="Enter your username"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500"
+              placeholder="Enter your password"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+            className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition font-medium"
           >
             Sign In
           </button>

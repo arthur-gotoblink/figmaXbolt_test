@@ -43,8 +43,9 @@ export function BookingList({ bookings, onSelectBooking, username, onLogout }: B
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-10">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
@@ -52,8 +53,8 @@ export function BookingList({ bookings, onSelectBooking, username, onLogout }: B
                 <Package className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className={`${textClasses.heading} text-slate-900`}>Transport Management</h1>
-                <p className={`${textClasses.small} text-slate-600`}>Manage your bookings and allocations</p>
+                <h1 className={`${textClasses.heading} text-gray-900 font-semibold`}>Transport Management</h1>
+                <p className={`${textClasses.small} text-gray-600`}>Manage your bookings and allocations</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -69,19 +70,19 @@ export function BookingList({ bookings, onSelectBooking, username, onLogout }: B
 
       <main className="px-4 sm:px-6 lg:px-8 py-6">
         <div className="max-w-7xl mx-auto space-y-6">
-          {/* Search and Filters */}
-          <Card className="border-slate-200 bg-white">
+          {/* Search and Filter Card */}
+          <Card className="border-gray-200 bg-white shadow-sm">
             <CardHeader className="pb-4">
-              <CardTitle className={`${textClasses.base} text-slate-900`}>Search & Filter</CardTitle>
+              <CardTitle className={`${textClasses.base} text-gray-900`}>Search & Filter</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   placeholder="Search by booking ID, customer, or location..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`${textClasses.base} pl-10 border-slate-200 focus:border-blue-500 touch-manipulation`}
+                  className={`${textClasses.base} pl-10 border-gray-200 focus:border-blue-500 touch-manipulation`}
                 />
               </div>
               
@@ -95,12 +96,12 @@ export function BookingList({ bookings, onSelectBooking, username, onLogout }: B
                     className={`${textClasses.small} touch-manipulation ${
                       selectedStatus === option.value 
                         ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                        : 'text-slate-600 hover:text-slate-900 border-slate-200'
+                        : 'text-gray-600 hover:text-gray-900 border-gray-200'
                     }`}
                   >
                     <Filter className="h-3 w-3 mr-1" />
                     {option.label}
-                    <Badge variant="secondary" className="ml-2 text-xs">
+                    <Badge variant="secondary" className="ml-2 text-xs bg-gray-100 text-gray-700">
                       {option.count}
                     </Badge>
                   </Button>
@@ -109,20 +110,20 @@ export function BookingList({ bookings, onSelectBooking, username, onLogout }: B
             </CardContent>
           </Card>
 
-          {/* Bookings List */}
+          {/* Bookings Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className={`${textClasses.base} text-slate-900`}>
+              <h2 className={`${textClasses.base} text-gray-900 font-medium`}>
                 Bookings ({filteredBookings.length})
               </h2>
             </div>
             
             {filteredBookings.length === 0 ? (
-              <Card className="border-slate-200 bg-white">
+              <Card className="border-gray-200 bg-white shadow-sm">
                 <CardContent className="py-12 text-center">
-                  <Package className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                  <h3 className={`${textClasses.base} text-slate-900 mb-2`}>No bookings found</h3>
-                  <p className={`${textClasses.small} text-slate-600`}>
+                  <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className={`${textClasses.base} text-gray-900 mb-2`}>No bookings found</h3>
+                  <p className={`${textClasses.small} text-gray-600`}>
                     {searchTerm || selectedStatus !== 'all' 
                       ? 'Try adjusting your search or filter criteria.' 
                       : 'Get started by creating your first booking.'}
