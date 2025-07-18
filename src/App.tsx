@@ -6,6 +6,7 @@ import { BookingDetails } from './components/BookingDetails';
 import { QuickAllocate } from './components/QuickAllocate';
 import { JobReply } from './components/booking/JobReply';
 import { SettingsProvider } from './components/SettingsContext';
+import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
 import type { Booking, AllocationRequest, Service } from './types/booking';
 
@@ -615,6 +616,8 @@ function App() {
           onReject={handleRejectJob}
           onNegotiate={handleNegotiateJob}
         />
+        
+        <Toaster />
       </div>
     </SettingsProvider>
   );
