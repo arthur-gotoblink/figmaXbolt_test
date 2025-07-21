@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import './styles/globals.css';
-import { Login } from './components/Login';
-import { BookingList } from './components/BookingList';
-import { BookingDetails } from './components/BookingDetails';
-import { QuickAllocate } from './components/QuickAllocate';
-import { JobReply } from './components/booking/JobReply';
-import { SettingsProvider } from './components/SettingsContext';
-import { Toaster } from './components/ui/sonner';
+import { Login } from '../components/Login';
+import { BookingList } from '../components/BookingList';
+import { BookingDetails } from '../components/BookingDetails';
+import { QuickAllocate } from '../components/QuickAllocate';
+import { JobReply } from '../components/booking/JobReply';
+import { SettingsProvider } from '../components/SettingsContext';
+import { Toaster } from '../components/ui/sonner';
 import type { Booking, AllocationRequest } from './types/booking';
 
 // Mock data for testing
