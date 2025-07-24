@@ -1,11 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-
-// import fetch from 'node-fetch';
+import fetch from 'node-fetch'; // important si tu es en CommonJS, sinon garde global fetch
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const BASE_URL = 'https://api.staging.blinksystems.com.au/v3';
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
@@ -35,15 +36,10 @@ app.post('/api/login', async (req, res) => {
 
 app.get('/api/bookings', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
-  console.log('[Server] Received request to /api/bookings with token:', token);
-
-
-  if (!token) {
-    return res.status(401).json({ error: 'Missing token' });
-  }
+  if (!token) return res.status(401).json({ error: 'Missing token' });
 
   try {
-    const blinkRes = await fetch('https://api.staging.blinksystems.com.au/v3/job/booking/search?limit=20&offset=0&sort_by=collect_after&order=desc', {
+    const blinkRes = await fetch(`${BASE_URL}/job/booking/search?limit=20&offset=0&sort_by=collect_after&order=desc`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -58,9 +54,46 @@ app.get('/api/bookings', async (req, res) => {
   }
 });
 
+// ✅ Nouvelle route : détails d’un booking
+app.get('/api/bookings/:id/details', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  const { id } = req.params;
+  if (!token) return res.status(401).json({ error: 'Missing token' });
 
+  try {
+    const blinkRes = await fetch(`${BASE_URL}/job/booking/read?id=${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
 
-const PORT = 3001;
-app.listen(PORT, () => {
-  console.log(`✅ Backend running on http://localhost:${PORT}`);
+    const data = await blinkRes.json();
+    res.status(blinkRes.status).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal proxy error', message: error.message });
+  }
+});
+
+// ✅ Nouvelle route : commentaires d’un booking
+app.get('/api/bookings/:id/comments', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  const { id } = req.params;
+  if (!token) return res.status(401).json({ error: 'Missing token' });
+
+  try {
+    const blinkRes = await fetch(`${BASE_URL}/job/comment/search?booking_id=${id}&sort_by=created_at&order=desc`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    const data = await blinkRes.json();
+    res.status(blinkRes.status).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal proxy error', message: error.message });
+  }
 });

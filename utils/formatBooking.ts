@@ -1,4 +1,5 @@
 import { Booking } from '../types/booking';
+import { Comment } from '../types/booking';
 
 export function formatRawBooking(raw: any): Booking {
   const fromLocation = raw.locations.find((loc: any) => loc.order === 1);
@@ -46,4 +47,13 @@ export function formatRawBooking(raw: any): Booking {
       },
     ],
   };
+}
+
+export function formatRawComments(rawComments: any[]): Comment[] {
+  return rawComments.map((raw) => ({
+    id: raw.id || '',
+    user: raw.user?.full_name || 'Unknown',
+    message: raw.comment || '',
+    timestamp: raw.created_at || '',
+  }));
 }

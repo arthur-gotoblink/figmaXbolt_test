@@ -12,7 +12,7 @@ import { mockBookings } from './mockBookings';
 import { fetchAllBookings } from './api/blinkApi';
 import { useAuth } from '../src/lib/authToken';
 import { BookingPage } from '../components/BookingPage';
-import { formatRawBooking } from '../utils/formatBooking';
+import { formatRawBooking, formatRawComments } from '../utils/formatBooking';
 
 
 
