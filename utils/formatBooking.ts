@@ -51,9 +51,9 @@ export function formatRawBooking(raw: any): Booking {
 
 export function formatRawComments(rawComments: any[]): Comment[] {
   return rawComments.map((raw) => ({
-    id: raw.id || '',
-    user: raw.user?.full_name || 'Unknown',
-    message: raw.comment || '',
-    timestamp: raw.created_at || '',
+    id: raw.id || Math.random().toString(36).substr(2, 9),
+    user: raw.user?.full_name || raw.user?.name || raw.created_by?.full_name || raw.created_by?.name || 'Unknown',
+    message: raw.comment || raw.message || raw.text || '',
+    timestamp: raw.created_at || raw.updated_at || raw.timestamp || new Date().toISOString(),
   }));
 }

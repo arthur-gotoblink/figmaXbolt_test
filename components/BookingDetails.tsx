@@ -35,9 +35,36 @@ export function BookingDetails({
   onLogout 
 }: BookingDetailsProps) {
   const { getTextSizeClasses } = useSettings();
+  const { token } = useAuth();
   const textClasses = getTextSizeClasses();
 
-  const handleAddComment = (comment: string) => {
+  const handleAddComment = async (comment: string) => {
+    if (!token) return;
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/bookings/${booking.id}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          comment: comment,
+          booking_id: booking.id
+        }),
+      });
+
+      if (response.ok) {
+        // Refresh the page or trigger a re-fetch of comments
+        window.location.reload();
+      } else {
+        console.error('Failed to add comment');
+      }
+    } catch (err) {
+      console.error('Error adding comment:', err);
+    }
+    
+    // Fallback to the original handler
     onAddComment(booking.id, comment);
   };
 

@@ -12,7 +12,7 @@ import { mockBookings } from './mockBookings';
 import { fetchAllBookings } from './api/blinkApi';
 import { useAuth } from '../src/lib/authToken';
 import { BookingPage } from '../components/BookingPage';
-import { formatRawBooking, formatRawComments } from '../utils/formatBooking';
+import { formatRawBooking } from '../utils/formatBooking';
 
 
 
@@ -93,6 +93,54 @@ function App() {
   const handleSelectBooking = (booking: Booking) => {
     setSelectedBooking(booking);
     setCurrentView('booking-details');
+    // Fetch comments when selecting a booking
+    fetchBookingComments(booking.id);
+  };
+
+  const fetchBookingComments = async (bookingId: string) => {
+    if (!token) return;
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/bookings/${bookingId}/comments`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 401) {
+        console.warn('[App] Unauthorized, clearing token');
+        setToken(null);
+        setCurrentView('login');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const apiData = await response.json();
+      const rawComments = apiData.data ?? [];
+      
+      // Update the selected booking with real comments
+      if (selectedBooking && selectedBooking.id === bookingId) {
+        const formattedComments = rawComments.map((raw: any) => ({
+          id: raw.id || '',
+          user: raw.user?.full_name || raw.user?.name || 'Unknown',
+          message: raw.comment || raw.message || '',
+          timestamp: raw.created_at || raw.timestamp || new Date().toISOString(),
+        }));
+
+        setSelectedBooking(prev => prev ? {
+          ...prev,
+          comments: formattedComments
+        } : null);
+      }
+    } catch (err) {
+      console.error('Failed to fetch comments for booking', bookingId, err);
+      // Keep existing comments if API fails
+    }
   };
 
   const handleBackToBookings = () => {

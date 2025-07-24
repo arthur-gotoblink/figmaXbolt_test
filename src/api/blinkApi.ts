@@ -35,5 +35,5 @@ export async function fetchBookingDetails(id: string, token: string) {
 }
 
 export async function fetchBookingComments(bookingId: string, token: string) {
-  return apiRequest(`/job/comment/search?booking_id=${bookingId}&sort_by=created_at&order=desc`, token);
+  return apiRequest(`/job/comment/search?booking_id=${bookingId}&sort_by=created_at&order=desc&limit=50`, token);
 }
