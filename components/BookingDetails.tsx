@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../src/lib/authToken';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { ArrowLeft, Package, MessageSquare } from 'lucide-react';
