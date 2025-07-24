@@ -11,7 +11,9 @@ import type { Booking, AllocationRequest } from './types/booking';
 import { mockBookings } from './mockBookings';
 import { fetchAllBookings } from './api/blinkApi';
 import { useAuth } from '../src/lib/authToken';
-import { BookingPage } from '../components/BookingPage'; // adapte selon ton arb
+import { BookingPage } from '../components/BookingPage';
+import { BookingDetails } from '../components/BookingDetails';
+import { formatRawBooking } from '../utils/formatBooking';
 
 
 
@@ -33,12 +35,42 @@ function App() {
       if (!token) return;
 
       try {
-        const res = await fetchAllBookings(token);
-        const data = res?.data || [];
-        setBookings(data);
+        const response = await fetch('http://localhost:3001/api/bookings', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 401) {
+          console.warn('[App] Unauthorized, clearing token');
+          setToken(null);
+          setCurrentView('login');
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const apiData = await response.json();
+        const rawBookings = apiData.bookings ?? [];
+        const formattedBookings: Booking[] = rawBookings.map((raw: any, i: number) => {
+          try {
+            const formatted = formatRawBooking(raw);
+            if (!formatted) console.warn("Formatted booking is empty", raw);
+            return formatted;
+          } catch (err) {
+            console.error("Error formatting booking at index", i, err);
+            return null;
+          }
+        }).filter(Boolean);
+
+        setBookings(formattedBookings);
       } catch (err) {
-        console.error('Error fetching bookings:', err);
-        setBookings(mockBookings); // fallback si erreur
+        console.error('Failed to fetch bookings, using mock data', err);
+        setBookings(mockBookings);
       } finally {
         setLoadingBookings(false);
       }
@@ -50,11 +82,11 @@ function App() {
     setCurrentUser(username);
     setToken(token);
     setCurrentView('bookings');
-    console.log(token);
   };
 
   const handleLogout = () => {
     setCurrentUser('');
+    setToken(null);
     setCurrentView('login');
     setSelectedBooking(null);
   };
@@ -110,13 +142,43 @@ function App() {
   const handleRemoveComment = (bookingId: string, commentId: string) => {
     console.log('Remove comment:', bookingId, commentId);
   };
+
   if (currentView === 'bookings' && loadingBookings) {
     return <div className="p-10 text-center text-gray-500">Loading bookings...</div>;
   }
 
 
   return (
-    <SettingsProvider>
+    <div className="App">
+      {currentView === 'login' && (
+        <div>Login component would go here</div>
+      )}
+      {currentView === 'bookings' && (
+        <BookingPage 
+          bookings={bookings}
+          onSelectBooking={handleSelectBooking}
+          username={currentUser}
+          onLogout={handleLogout}
+        />
+      )}
+      {currentView === 'booking-details' && selectedBooking && (
+        <BookingDetails 
+          booking={selectedBooking}
+          onBack={handleBackToBookings}
+          onQuickAllocate={handleQuickAllocate}
+          onReplyToJob={handleReplyToJob}
+          onAddComment={handleAddComment}
+          onEditComment={handleEditComment}
+          onRemoveComment={handleRemoveComment}
+          username={currentUser}
+          onLogout={handleLogout}
+        />
+      )}
+    </div>
+  );
+}
+
+export default App;
       <div className="App">
         {currentView === 'login' && (
           <Login onLogin={onLogin} />
