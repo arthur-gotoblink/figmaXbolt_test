@@ -149,42 +149,18 @@ function App() {
 
 
   return (
-    <div className="App">
-      {currentView === 'login' && (
-        <div>Login component would go here</div>
-      )}
-      {currentView === 'bookings' && (
-        <BookingPage 
-          bookings={bookings}
-          onSelectBooking={handleSelectBooking}
-          username={currentUser}
-          onLogout={handleLogout}
-        />
-      )}
-      {currentView === 'booking-details' && selectedBooking && (
-        <BookingDetails 
-          booking={selectedBooking}
-          onBack={handleBackToBookings}
-          onQuickAllocate={handleQuickAllocate}
-          onReplyToJob={handleReplyToJob}
-          onAddComment={handleAddComment}
-          onEditComment={handleEditComment}
-          onRemoveComment={handleRemoveComment}
-          username={currentUser}
-          onLogout={handleLogout}
-        />
-      )}
-    </div>
-  );
-}
-
-export default App;
+    <SettingsProvider>
       <div className="App">
         {currentView === 'login' && (
           <Login onLogin={onLogin} />
         )}
         {currentView === 'bookings' && (
-          <BookingPage />
+          <BookingPage 
+            bookings={bookings}
+            onSelectBooking={handleSelectBooking}
+            username={currentUser}
+            onLogout={handleLogout}
+          />
         )}
         {currentView === 'booking-details' && selectedBooking && (
           <BookingDetails 
