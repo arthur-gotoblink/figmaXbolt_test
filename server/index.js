@@ -54,7 +54,7 @@ app.get('/api/bookings', async (req, res) => {
   }
 });
 
-// ✅ Nouvelle route : détails d’un booking
+// ✅ Nouvelle route : détails d'un booking
 app.get('/api/bookings/:id/details', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   const { id } = req.params;
@@ -76,7 +76,7 @@ app.get('/api/bookings/:id/details', async (req, res) => {
   }
 });
 
-// ✅ Nouvelle route : commentaires d’un booking
+// ✅ Nouvelle route : commentaires d'un booking
 app.get('/api/bookings/:id/comments', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   const { id } = req.params;
@@ -96,4 +96,8 @@ app.get('/api/bookings/:id/comments', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Internal proxy error', message: error.message });
   }
+});
+
+app.listen(3001, () => {
+  console.log('Server listening on port 3001');
 });
