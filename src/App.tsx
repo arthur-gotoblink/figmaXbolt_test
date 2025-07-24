@@ -12,7 +12,6 @@ import { mockBookings } from './mockBookings';
 import { fetchAllBookings } from './api/blinkApi';
 import { useAuth } from '../src/lib/authToken';
 import { BookingPage } from '../components/BookingPage';
-import { BookingDetails } from '../components/BookingDetails';
 import { formatRawBooking } from '../utils/formatBooking';
 
 
