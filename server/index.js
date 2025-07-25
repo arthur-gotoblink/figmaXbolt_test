@@ -101,30 +101,67 @@ app.get('/api/bookings/:id/comments', async (req, res) => {
 // ✅ Route pour ajouter un commentaire
 app.post('/api/bookings/:id/comments', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
-  const { id } = req.params;
-  const { comment, booking_id } = req.body;
-  
-  if (!token) return res.status(401).json({ error: 'Missing token' });
+  const { id: booking_id } = req.params;
+  const { comment } = req.body;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Missing token' });
+  }
+
+  if (!comment) {
+    return res.status(400).json({ error: 'Missing comment text' });
+  }
 
   try {
-    const blinkRes = await fetch(`${BASE_URL}/job/comment/create`, {
+    const blinkRes = await fetch(`${BASE_URL}/v3/job/comment/create`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        comment: comment,
-        booking_id: booking_id || id
+        booking_id,
+        comment,
+        external: false,
       }),
     });
 
     const data = await blinkRes.json();
     res.status(blinkRes.status).json(data);
   } catch (error) {
-    res.status(500).json({ error: 'Internal proxy error', message: error.message });
+    res.status(500).json({
+      error: 'Internal proxy error',
+      message: error instanceof Error ? error.message : String(error),
+    });
   }
 });
+app.post('/api/bookings/create', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  const body = req.body;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Missing token' });
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/v3/job/booking/create`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const responseData = await response.json();
+
+    return res.status(response.status).json(responseData);
+  } catch (err) {
+    console.error('Booking creation failed:', err);
+    return res.status(500).json({ error: 'Internal proxy error', message: err.message });
+  }
+});
+
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

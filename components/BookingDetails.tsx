@@ -54,7 +54,7 @@ export function BookingDetails({
           booking_id: booking.id
         }),
       });
-
+      console.log(response);
       if (response.ok) {
         // Refresh the page or trigger a re-fetch of comments
         window.location.reload();
@@ -108,7 +108,7 @@ export function BookingDetails({
   };
 
   const actionButton = renderActionButton();
-
+  console.log(booking.comments);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-10">

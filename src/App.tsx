@@ -90,58 +90,59 @@ function App() {
     setSelectedBooking(null);
   };
 
-  const handleSelectBooking = (booking: Booking) => {
-    setSelectedBooking(booking);
-    setCurrentView('booking-details');
-    // Fetch comments when selecting a booking
-    fetchBookingComments(booking.id);
-  };
-
-  const fetchBookingComments = async (bookingId: string) => {
+  const handleSelectBooking = async (booking: Booking) => {
+    setLoadingBookings(true); // Optionnel : pour un petit spinner
     if (!token) return;
-
+  
     try {
-      const response = await fetch(`http://localhost:3001/api/bookings/${bookingId}/comments`, {
+      const response = await fetch(`http://localhost:3001/api/bookings/${booking.id}/comments`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
       });
-
+    
       if (response.status === 401) {
-        console.warn('[App] Unauthorized, clearing token');
         setToken(null);
         setCurrentView('login');
         return;
       }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+    
       const apiData = await response.json();
-      const rawComments = apiData.data ?? [];
+      const rawComments = apiData.comments ?? [];
+      const users = apiData.Users || {};
+    
+      const formattedComments = rawComments.map((raw: any) => {
+        const user = users[raw.user_id];
+        const userName = user?.full_name || user?.name || 'Unknown';
       
-      // Update the selected booking with real comments
-      if (selectedBooking && selectedBooking.id === bookingId) {
-        const formattedComments = rawComments.map((raw: any) => ({
+        return {
           id: raw.id || '',
-          user: raw.user?.full_name || raw.user?.name || 'Unknown',
+          user: userName,
           message: raw.comment || raw.message || '',
           timestamp: raw.created_at || raw.timestamp || new Date().toISOString(),
-        }));
-
-        setSelectedBooking(prev => prev ? {
-          ...prev,
-          comments: formattedComments
-        } : null);
-      }
+        };
+      });
+    
+      // 👇 ici on injecte les commentaires
+      setSelectedBooking({
+        ...booking,
+        comments: formattedComments,
+      });
+      setCurrentView('booking-details');
     } catch (err) {
-      console.error('Failed to fetch comments for booking', bookingId, err);
-      // Keep existing comments if API fails
+      console.error('Failed to fetch comments', err);
+      setSelectedBooking({
+        ...booking,
+        comments: [],
+      });
+      setCurrentView('booking-details');
+    } finally {
+      setLoadingBookings(false);
     }
   };
+  
 
   const handleBackToBookings = () => {
     setCurrentView('bookings');
