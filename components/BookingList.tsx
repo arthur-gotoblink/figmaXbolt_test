@@ -69,8 +69,10 @@ export function BookingList({ bookings, onSelectBooking, onBookingCreated, usern
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <Button className={`${textClasses.small} hidden sm:flex touch-manipulation bg-blue-600 hover:bg-blue-700 text-white`}>
+              <Button 
                 onClick={handleNewBookingClick}
+                className={`${textClasses.small} hidden sm:flex touch-manipulation bg-blue-600 hover:bg-blue-700 text-white`}
+              >
                 <Plus className="h-4 w-4 mr-1" />
                 New Booking
               </Button>
