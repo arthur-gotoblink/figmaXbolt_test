@@ -191,6 +191,59 @@ function App() {
     console.log('Remove comment:', bookingId, commentId);
   };
 
+  const handleBookingCreated = () => {
+    // Refresh the bookings list after a new booking is created
+    if (token) {
+      loadBookings();
+    }
+  };
+
+  const loadBookings = async () => {
+    if (!token) return;
+
+    setLoadingBookings(true);
+    try {
+      const response = await fetch('http://localhost:3001/api/bookings', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 401) {
+        console.warn('[App] Unauthorized, clearing token');
+        setToken(null);
+        setCurrentView('login');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const apiData = await response.json();
+      const rawBookings = apiData.bookings ?? [];
+      const formattedBookings: Booking[] = rawBookings.map((raw: any, i: number) => {
+        try {
+          const formatted = formatRawBooking(raw);
+          if (!formatted) console.warn("Formatted booking is empty", raw);
+          return formatted;
+        } catch (err) {
+          console.error("Error formatting booking at index", i, err);
+          return null;
+        }
+      }).filter(Boolean);
+
+      setBookings(formattedBookings);
+    } catch (err) {
+      console.error('Failed to fetch bookings, using mock data', err);
+      setBookings(mockBookings);
+    } finally {
+      setLoadingBookings(false);
+    }
+  };
+
   if (currentView === 'bookings' && loadingBookings) {
     return <div className="p-10 text-center text-gray-500">Loading bookings...</div>;
   }
@@ -206,6 +259,7 @@ function App() {
           <BookingPage 
             bookings={bookings}
             onSelectBooking={handleSelectBooking}
+            onBookingCreated={handleBookingCreated}
             username={currentUser}
             onLogout={handleLogout}
           />

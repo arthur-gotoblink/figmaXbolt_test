@@ -5,19 +5,22 @@ import { Badge } from './ui/badge';
 import { Search, Package, Filter, Plus, Truck } from 'lucide-react';
 import { BookingCard } from './booking/BookingCard';
 import { SettingsMenu } from './SettingsMenu';
+import { NewBookingForm } from './NewBookingForm';
 import { useSettings } from './SettingsContext';
 import { Booking } from '../types/booking';
 
 interface BookingListProps {
   bookings: Booking[];
   onSelectBooking: (booking: Booking) => void;
+  onBookingCreated: () => void;
   username: string;
   onLogout: () => void;
 }
 
-export function BookingList({ bookings, onSelectBooking, username, onLogout }: BookingListProps) {
+export function BookingList({ bookings, onSelectBooking, onBookingCreated, username, onLogout }: BookingListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [showNewBookingForm, setShowNewBookingForm] = useState(false);
   const { getTextSizeClasses } = useSettings();
   const textClasses = getTextSizeClasses();
 
@@ -41,6 +44,15 @@ export function BookingList({ bookings, onSelectBooking, username, onLogout }: B
     return matchesSearch && matchesStatus;
   });
 
+  const handleNewBookingClick = () => {
+    setShowNewBookingForm(true);
+  };
+
+  const handleBookingCreated = () => {
+    setShowNewBookingForm(false);
+    onBookingCreated();
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -58,6 +70,7 @@ export function BookingList({ bookings, onSelectBooking, username, onLogout }: B
             </div>
             <div className="flex items-center space-x-3">
               <Button className={`${textClasses.small} hidden sm:flex touch-manipulation bg-blue-600 hover:bg-blue-700 text-white`}>
+                onClick={handleNewBookingClick}
                 <Plus className="h-4 w-4 mr-1" />
                 New Booking
               </Button>
@@ -139,6 +152,12 @@ export function BookingList({ bookings, onSelectBooking, username, onLogout }: B
           </div>
         </div>
       </main>
+
+      <NewBookingForm
+        isOpen={showNewBookingForm}
+        onClose={() => setShowNewBookingForm(false)}
+        onBookingCreated={handleBookingCreated}
+      />
     </div>
   );
 }
