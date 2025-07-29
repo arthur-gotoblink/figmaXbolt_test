@@ -113,7 +113,7 @@ app.post('/api/bookings/:id/comments', async (req, res) => {
   }
 
   try {
-    const blinkRes = await fetch(`${BASE_URL}/v3/job/comment/create`, {
+    const blinkRes = await fetch(`${BASE_URL}/job/comment/create`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -144,7 +144,7 @@ app.post('/api/bookings/create', async (req, res) => {
   }
 
   try {
-    const response = await fetch(`${BASE_URL}/v3/job/booking/create`, {
+    const response = await fetch(`${BASE_URL}/job/booking/create`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -168,7 +168,7 @@ app.get('/api/drivers', async (req, res) => {
   if (!token) return res.status(401).json({ error: 'Missing token' });
 
   try {
-    const blinkRes = await fetch(`${BASE_URL}/v3/user/team/search?limit=20&offset=0`, {
+    const blinkRes = await fetch(`${BASE_URL}/user/team/search?limit=20&offset=0`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -179,6 +179,7 @@ app.get('/api/drivers', async (req, res) => {
     const data = await blinkRes.json();
     res.status(blinkRes.status).json(data);
   } catch (error) {
+    console.error('[API /api/drivers] Error:', error);
     res.status(500).json({ error: 'Internal proxy error', message: error.message });
   }
 });

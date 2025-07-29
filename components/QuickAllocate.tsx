@@ -44,6 +44,7 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
       
       setLoadingDrivers(true);
       try {
+        console.log('[Fetch Drivers] Using token:', token);
         const response = await fetch('http://localhost:3001/api/drivers', {
           method: 'GET',
           headers: {
@@ -62,7 +63,7 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
             name: member.full_name || member.name || 'Unknown',
             available: member.active !== false // Assume available unless explicitly inactive
           }));
-          
+          console.log(formattedDrivers);
           setDrivers(formattedDrivers);
         } else {
           if (response.status === 401) {
