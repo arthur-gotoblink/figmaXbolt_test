@@ -9,6 +9,7 @@ import { SelectItemsStep } from './allocation/SelectItemsStep';
 import { ChooseDateStep } from './allocation/ChooseDateStep';
 import { AssignDriverStep } from './allocation/AssignDriverStep';
 import { useSettings } from './SettingsContext';
+import { useAuth } from '../src/lib/authToken';
 import { Booking, Driver, AllocationRequest } from '../types/booking';
 
 interface QuickAllocateProps {
@@ -29,23 +30,56 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
   const [allocationResult, setAllocationResult] = useState<{ success: boolean; message: string; driverName: string } | null>(null);
   
   const { getTextSizeClasses } = useSettings();
+  const { token } = useAuth();
   const textClasses = getTextSizeClasses();
 
-  // Mock drivers data - expanded for better search testing
-  const drivers: Driver[] = [
-    { id: '1', name: 'John Smith', available: true },
-    { id: '2', name: 'Sarah Johnson', available: true },
-    { id: '3', name: 'Mike Wilson', available: true },
-    { id: '4', name: 'Emma Davis', available: false },
-    { id: '5', name: 'David Brown', available: true },
-    { id: '6', name: 'Lisa Chen', available: true },
-    { id: '7', name: 'Robert Taylor', available: true },
-    { id: '8', name: 'Jennifer Martinez', available: true },
-    { id: '9', name: 'Michael Anderson', available: true },
-    { id: '10', name: 'Ashley Thompson', available: true },
-    { id: '11', name: 'Christopher Lee', available: true },
-    { id: '12', name: 'Amanda White', available: false },
-  ];
+  // Real drivers data from API
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [loadingDrivers, setLoadingDrivers] = useState(false);
+
+  // Fetch drivers when modal opens
+  React.useEffect(() => {
+    const fetchDrivers = async () => {
+      if (!isOpen || !token) return;
+      
+      setLoadingDrivers(true);
+      try {
+        const response = await fetch('http://localhost:3001/api/drivers', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const teamMembers = data.data || [];
+          
+          // Format team members as drivers
+          const formattedDrivers: Driver[] = teamMembers.map((member: any) => ({
+            id: member.id || member.user_id || '',
+            name: member.full_name || member.name || 'Unknown',
+            available: member.active !== false // Assume available unless explicitly inactive
+          }));
+          
+          setDrivers(formattedDrivers);
+        } else {
+          console.error('Failed to fetch drivers');
+          // Fallback to empty array
+          setDrivers([]);
+        }
+      } catch (error) {
+        console.error('Error fetching drivers:', error);
+        // Fallback to empty array
+        setDrivers([]);
+      } finally {
+        setLoadingDrivers(false);
+      }
+    };
+
+    fetchDrivers();
+  }, [isOpen, token]);
 
   const handleVehicleSelection = (vehicleId: string, selected: boolean) => {
     if (selected) {
@@ -191,6 +225,7 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
             {currentStep === 3 && (
               <AssignDriverStep
                 drivers={drivers}
+                loading={loadingDrivers}
                 selectedDriver={selectedDriver}
                 onDriverSelection={setSelectedDriver}
               />

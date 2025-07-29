@@ -162,6 +162,26 @@ app.post('/api/bookings/create', async (req, res) => {
   }
 });
 
+// ✅ Route to fetch team drivers
+app.get('/api/drivers', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Missing token' });
+
+  try {
+    const blinkRes = await fetch(`${BASE_URL}/v3/user/team/search?limit=20&offset=0`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    const data = await blinkRes.json();
+    res.status(blinkRes.status).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal proxy error', message: error.message });
+  }
+});
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

@@ -7,11 +7,12 @@ import { Driver } from '../../types/booking';
 
 interface AssignDriverStepProps {
   drivers: Driver[];
+  loading?: boolean;
   selectedDriver: string;
   onDriverSelection: (driverId: string) => void;
 }
 
-export function AssignDriverStep({ drivers, selectedDriver, onDriverSelection }: AssignDriverStepProps) {
+export function AssignDriverStep({ drivers, loading = false, selectedDriver, onDriverSelection }: AssignDriverStepProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const { getTextSizeClasses } = useSettings();
   const textClasses = getTextSizeClasses();
@@ -43,6 +44,11 @@ export function AssignDriverStep({ drivers, selectedDriver, onDriverSelection }:
       </div>
       
       <div className="space-y-3 max-h-64 overflow-y-auto">
+        {loading ? (
+          <div className="p-4 text-center text-slate-500">
+            <p className={textClasses.small}>Loading drivers...</p>
+          </div>
+        ) : 
         {filteredDrivers.length === 0 ? (
           <div className="p-4 text-center text-slate-500">
             <p className={textClasses.small}>
