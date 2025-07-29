@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { User, CheckCircle, Search } from 'lucide-react';
 import { useSettings } from '../SettingsContext';
 import { Driver } from '../../types/booking';
@@ -22,6 +23,15 @@ export function AssignDriverStep({ drivers, loading = false, selectedDriver, onD
   const filteredDrivers = drivers.filter(driver =>
     driver.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const getDriverInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="space-y-4">
@@ -70,9 +80,18 @@ export function AssignDriverStep({ drivers, loading = false, selectedDriver, onD
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
-                      <User className="h-5 w-5 text-slate-600" />
-                    </div>
+                    <Avatar className="h-10 w-10">
+                      {driver.image && (
+                        <AvatarImage 
+                          src={driver.image} 
+                          alt={driver.name}
+                          className="object-cover"
+                        />
+                      )}
+                      <AvatarFallback className="bg-blue-100 text-blue-700 text-sm font-medium">
+                        {getDriverInitials(driver.name)}
+                      </AvatarFallback>
+                    </Avatar>
                     <div>
                       <h4 className={`${textClasses.base} font-medium text-slate-900`}>
                         {driver.name}
