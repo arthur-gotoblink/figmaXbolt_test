@@ -1,5 +1,6 @@
 import { Booking } from '../types/booking';
 import { Comment } from '../types/booking';
+import {TeamMember} from '../types/booking';
 
 export function formatRawBooking(raw: any): Booking {
   // Check if raw data is valid
@@ -64,5 +65,18 @@ export function formatRawComments(rawComments: any[]): Comment[] {
     user: raw.user?.full_name || raw.user?.name || raw.created_by?.full_name || raw.created_by?.name || 'Unknown',
     message: raw.comment || raw.message || raw.text || '',
     timestamp: raw.created_at || raw.updated_at || raw.timestamp || new Date().toISOString(),
+  }));
+}
+
+export function formatRawTeamList(apiResponse: any): TeamMember[] {
+  if (!apiResponse || !Array.isArray(apiResponse.users)) return [];
+
+  return apiResponse.users.map((user: any): TeamMember => ({
+    id: user.id || '',
+    name: user.full_name || user.user_name || 'Unnamed',
+    email: user.email || 'No email',
+    image: user.image || null,
+    phone: user.phone || '',
+    status: user.status || '',
   }));
 }

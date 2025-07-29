@@ -27,6 +27,15 @@ export interface Comment {
   timestamp: string;
 }
 
+export interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+  phone?: string;
+  status?: string;
+}
+
 export interface Booking {
   id: string;
   reservationId: string;

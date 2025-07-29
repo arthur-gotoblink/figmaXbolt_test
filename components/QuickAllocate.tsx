@@ -11,6 +11,7 @@ import { AssignDriverStep } from './allocation/AssignDriverStep';
 import { useSettings } from './SettingsContext';
 import { useAuth } from '../src/lib/authToken';
 import { Booking, Driver, AllocationRequest } from '../types/booking';
+import { formatRawTeamList } from '../utils/formatBooking';
 
 interface QuickAllocateProps {
   isOpen: boolean;
@@ -41,10 +42,11 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
   React.useEffect(() => {
     const fetchDrivers = async () => {
       if (!isOpen || !token) return;
-      
+        
       setLoadingDrivers(true);
       try {
         console.log('[Fetch Drivers] Using token:', token);
+
         const response = await fetch('http://localhost:3001/api/drivers', {
           method: 'GET',
           headers: {
@@ -52,18 +54,15 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
             'Authorization': `Bearer ${token}`,
           },
         });
-
+      
         if (response.ok) {
           const data = await response.json();
-          const teamMembers = data.data || [];
-          
-          // Format team members as drivers
-          const formattedDrivers: Driver[] = teamMembers.map((member: any) => ({
-            id: member.id || member.user_id || '',
-            name: member.full_name || member.name || 'Unknown',
-            available: member.active !== false // Assume available unless explicitly inactive
-          }));
-          console.log(formattedDrivers);
+          console.log('[API Response]', data);
+        
+          // Utilisation de ta fonction de format
+          const formattedDrivers = formatRawTeamList(data);
+          console.log('[Formatted Drivers]', formattedDrivers);
+        
           setDrivers(formattedDrivers);
         } else {
           if (response.status === 401) {
@@ -71,18 +70,15 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
             return;
           }
           console.error('Failed to fetch drivers');
-          // Fallback to empty array
           setDrivers([]);
         }
       } catch (error) {
         console.error('Error fetching drivers:', error);
-        // Fallback to empty array
         setDrivers([]);
       } finally {
         setLoadingDrivers(false);
       }
     };
-
     fetchDrivers();
   }, [isOpen, token]);
 
