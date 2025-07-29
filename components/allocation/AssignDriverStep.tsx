@@ -49,7 +49,7 @@ export function AssignDriverStep({ drivers, loading = false, selectedDriver, onD
             <p className={textClasses.small}>Loading drivers...</p>
           </div>
         ) : 
-        {filteredDrivers.length === 0 ? (
+        filteredDrivers.length === 0 ? (
           <div className="p-4 text-center text-slate-500">
             <p className={textClasses.small}>
               {searchTerm ? 'No drivers found matching your search.' : 'No available drivers.'}
