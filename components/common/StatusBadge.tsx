@@ -9,7 +9,10 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, type, className = '' }: StatusBadgeProps) {
   const getStatusStyles = (status: string) => {
-    switch (status.toLowerCase()) {
+    // Handle undefined/null status
+    const statusLower = (status || 'unknown').toLowerCase();
+    
+    switch (statusLower) {
       case 'pending':
         return 'bg-yellow-100 text-yellow-700 border-yellow-200';
       case 'pending customer':
@@ -38,7 +41,7 @@ export function StatusBadge({ status, type, className = '' }: StatusBadgeProps) 
   
   return (
     <Badge className={`${colorClass} border text-xs font-medium px-3 py-1 rounded-full ${className}`}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
+      {(status || 'Unknown').charAt(0).toUpperCase() + (status || 'Unknown').slice(1)}
     </Badge>
   );
 }

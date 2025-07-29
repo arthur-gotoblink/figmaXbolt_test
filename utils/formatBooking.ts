@@ -2,10 +2,19 @@ import { Booking } from '../types/booking';
 import { Comment } from '../types/booking';
 
 export function formatRawBooking(raw: any): Booking {
+  // Check if raw data is valid
+  if (!raw || typeof raw !== 'object') {
+    return null;
+  }
+
+  // Ensure required properties exist with fallbacks
+  const locations = raw.locations || [];
+  const items = raw.items || [];
+  
   const fromLocation = raw.locations.find((loc: any) => loc.order === 1);
   const toLocation = raw.locations.find((loc: any) => loc.order === 2);
 
-  const vehicleData = raw.items.map((item: any) => {
+  const vehicleData = items.map((item: any) => {
     const vehicle = item.vehicle || {};
     return {
       id: vehicle.id,
@@ -31,13 +40,13 @@ export function formatRawBooking(raw: any): Booking {
     },
     collectionDate: raw.collect_after,
     deliveryDate: raw.deliver_before,
-    items: raw.items.map((item: any) => ({
+    items: items.map((item: any) => ({
       id: item.id,
       vehicleId: item.vehicle?.id || '',
-      status: item.status,
+      status: item.status || 'unknown',
     })),
     vehicles: vehicleData,
-    status: raw.status,
+    status: raw.status || 'unknown',
     comments: [
       {
         id: 'comment-id',
