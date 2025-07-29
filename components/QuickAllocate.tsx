@@ -81,7 +81,7 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
     };
     fetchDrivers();
   }, [isOpen, token]);
-
+  
   const handleVehicleSelection = (vehicleId: string, selected: boolean) => {
     if (selected) {
       setSelectedVehicles(prev => [...prev, vehicleId]);
@@ -91,6 +91,7 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
   };
 
   const handleNext = () => {
+    console.log('[Drivers List]',drivers);
     if (currentStep < 3) {
       setCurrentStep(prev => prev + 1);
     }
@@ -116,7 +117,7 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
           driverId: selectedDriver,
           date: selectedDate
         });
-
+        
         const driverName = drivers.find(d => d.id === selectedDriver)?.name || 'Unknown';
         setAllocationResult({
           success: true,

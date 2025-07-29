@@ -17,9 +17,9 @@ export function AssignDriverStep({ drivers, loading = false, selectedDriver, onD
   const { getTextSizeClasses } = useSettings();
   const textClasses = getTextSizeClasses();
 
-  const availableDrivers = drivers.filter(driver => driver.available);
+  // const availableDrivers = drivers.filter(driver => driver.available);
 
-  const filteredDrivers = availableDrivers.filter(driver =>
+  const filteredDrivers = drivers.filter(driver =>
     driver.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
