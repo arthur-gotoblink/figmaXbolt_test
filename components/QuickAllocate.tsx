@@ -65,6 +65,10 @@ export function QuickAllocate({ isOpen, onClose, booking, onAllocate }: QuickAll
           
           setDrivers(formattedDrivers);
         } else {
+          if (response.status === 401) {
+            setToken(null);
+            return;
+          }
           console.error('Failed to fetch drivers');
           // Fallback to empty array
           setDrivers([]);

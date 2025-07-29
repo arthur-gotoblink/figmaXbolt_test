@@ -83,7 +83,7 @@ export function AssignDriverStep({ drivers, loading = false, selectedDriver, onD
               </div>
             </div>
           ))
-        )}
+        )
       </div>
     </div>
   );
