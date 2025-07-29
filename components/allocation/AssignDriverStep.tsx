@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { User, CheckCircle, Search } from 'lucide-react';
 import { useSettings } from '../SettingsContext';
 import { Driver } from '../../types/booking';
@@ -18,7 +17,7 @@ export function AssignDriverStep({ drivers, loading = false, selectedDriver, onD
   const { getTextSizeClasses } = useSettings();
   const textClasses = getTextSizeClasses();
 
-  // const availableDrivers = drivers.filter(driver => driver.available);
+  const availableDrivers = drivers.filter(driver => driver.available);
 
   const filteredDrivers = drivers.filter(driver =>
     driver.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -44,52 +43,53 @@ export function AssignDriverStep({ drivers, loading = false, selectedDriver, onD
         />
       </div>
       
-      {/* Driver Selection Dropdown */}
-      <div className="space-y-2">
-        <Label className={`${textClasses.small} text-slate-700`}>
-          Select Driver
-        </Label>
-        <Select 
-          value={selectedDriver} 
-          onValueChange={onDriverSelection}
-          disabled={loading || filteredDrivers.length === 0}
-        >
-          <SelectTrigger className={`${textClasses.base} h-12 border-slate-200 focus:border-blue-500 touch-manipulation`}>
-            <SelectValue 
-              placeholder={
-                loading 
-                  ? "Loading drivers..." 
-                  : filteredDrivers.length === 0 
-                    ? (searchTerm ? "No drivers found matching your search" : "No available drivers")
-                    : "Choose a driver..."
-              } 
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {filteredDrivers.map((driver) => (
-              <SelectItem key={driver.id} value={driver.id}>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>{driver.name}</span>
+      <div className="space-y-3 max-h-64 overflow-y-auto">
+        {loading ? (
+          <div className="p-4 text-center text-slate-500">
+            <p className={textClasses.small}>Loading drivers...</p>
+          </div>
+        ) : filteredDrivers.length === 0 ? (
+          <div className="p-4 text-center text-slate-500">
+            <p className={textClasses.small}>
+              {searchTerm ? 'No drivers found matching your search.' : 'No available drivers.'}
+            </p>
+          </div>
+        ) : (
+          filteredDrivers.map((driver) => {
+            const isSelected = selectedDriver === driver.id;
+            
+            return (
+              <div
+                key={driver.id}
+                className={`p-4 border rounded-lg cursor-pointer transition-all touch-manipulation ${
+                  isSelected 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-slate-200 bg-white hover:border-slate-300 active:bg-slate-50'
+                }`}
+                onClick={() => onDriverSelection(driver.id)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
+                      <User className="h-5 w-5 text-slate-600" />
+                    </div>
+                    <div>
+                      <h4 className={`${textClasses.base} font-medium text-slate-900`}>
+                        {driver.name}
+                      </h4>
+                      <p className={`${textClasses.small} text-green-600`}>
+                        Available
+                      </p>
+                    </div>
+                  </div>
+                  {isSelected && (
+                    <CheckCircle className="h-6 w-6 text-blue-600" />
+                  )}
                 </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      
-      {/* Selected Driver Display */}
-      {selectedDriver && !loading && (
-        <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="flex items-center space-x-2">
-            <CheckCircle className="h-5 w-5 text-blue-600" />
-            <div>
-              <p className={`${textClasses.base} font-medium text-blue-900`}>
-                Selected Driver
-              </p>
-              <p className={`${textClasses.small} text-blue-700`}>
-                {filteredDrivers.find(d => d.id === selectedDriver)?.name || 'Unknown Driver'}
-              </p>
+              </div>
+            );
+          })
+        )}
             </div>
           </div>
         </div>
