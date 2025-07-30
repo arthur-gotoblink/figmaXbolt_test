@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './styles/globals.css';
 import { Login } from '../components/Login';
-import { BookingList } from '../components/BookingList';
 import { BookingDetails } from '../components/BookingDetails';
 import { QuickAllocate } from '../components/QuickAllocate';
 import { JobReply } from '../components/booking/JobReply';
@@ -9,7 +8,6 @@ import { SettingsProvider } from '../components/SettingsContext';
 import { Toaster } from '../components/ui/sonner';
 import type { Booking, AllocationRequest } from './types/booking';
 import { mockBookings } from './mockBookings';
-import { fetchAllBookings } from './api/blinkApi';
 import { useAuth } from '../src/lib/authToken';
 import { BookingPage } from '../components/BookingPage';
 import { formatRawBooking } from '../utils/formatBooking';

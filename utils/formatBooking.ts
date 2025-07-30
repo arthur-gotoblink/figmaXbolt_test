@@ -25,7 +25,7 @@ export function formatRawBooking(raw: any): Booking {
       colour: vehicle.colour || '',
       year: vehicle.year || 0,
       notes: vehicle.notes || '',
-      services: [], // Tu pourras les rajouter plus tard
+      services: [], 
     };
   });
 

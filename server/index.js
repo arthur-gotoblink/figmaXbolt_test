@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import fetch from 'node-fetch'; // important si tu es en CommonJS, sinon garde global fetch
+import fetch from 'node-fetch'; 
 
 const app = express();
 app.use(cors());
@@ -8,6 +8,7 @@ app.use(express.json());
 
 const BASE_URL = 'https://api.staging.blinksystems.com.au/v3';
 
+// Log in with auth0
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -34,6 +35,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// List all bookings
 app.get('/api/bookings', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Missing token' });
@@ -54,7 +56,7 @@ app.get('/api/bookings', async (req, res) => {
   }
 });
 
-// ✅ Nouvelle route : détails d'un booking
+// ✅ Get all booking's details
 app.get('/api/bookings/:id/details', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   const { id } = req.params;
@@ -76,7 +78,7 @@ app.get('/api/bookings/:id/details', async (req, res) => {
   }
 });
 
-// ✅ Nouvelle route : commentaires d'un booking
+// ✅ Get booking's comments
 app.get('/api/bookings/:id/comments', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   const { id } = req.params;
@@ -98,7 +100,7 @@ app.get('/api/bookings/:id/comments', async (req, res) => {
   }
 });
 
-// ✅ Route pour ajouter un commentaire
+// ✅ Add new comments
 app.post('/api/bookings/:id/comments', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   const { id: booking_id } = req.params;
@@ -162,7 +164,7 @@ app.post('/api/bookings/create', async (req, res) => {
   }
 });
 
-// ✅ Route to fetch team drivers
+// ✅ Get all the team member
 app.get('/api/drivers', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Missing token' });
